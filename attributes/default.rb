@@ -8,3 +8,7 @@ default['redis']['source_file_name'] = "redis-#{default['redis']['source_ver_num
 
 # redis-server のインストールパス
 default['redis']['server_install_path'] = '/usr/local/bin/redis-server'
+default['redis']['server_conf_path'] = '/usr/local/etc/redis.conf'
+
+# redis 用のユーザー
+default['redis']['user'] = 'redis-user'

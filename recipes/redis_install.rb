@@ -25,15 +25,51 @@ bash "install_redis_program" do
     make
     make install
   EOH
-  not_if "ls #{node['redis']['server_install_path']}"
+  not_if {File.exists?(#{node['redis']['server_install_path']})}
 end
 
 # サービスを起動する
-bash "start_redis_server" do
-  user "root"
-  cwd "/usr/local/bin"
-  code <<-EOH
-    #{node['redis']['server_install_path']} &
-  EOH
-  not_if "ps aux | grep \[r\]edis-server"
+#bash "start_redis_server" do
+#  user "root"
+#  cwd "/usr/local/bin"
+#  code <<-EOH
+#    #{node['redis']['server_install_path']} &
+#  EOH
+#  not_if "ps aux | grep \[r\]edis-server"
+#end
+
+# redis 用ユーザーを作成する
+user node['redis']['user'] do
+  comment "redis system"
+  system true
+  shell "/bin/false"
+  not_if "id #{node['redis']['user']}"
+end
+
+# update-rc.d を実行する
+execute "update_rc_d" do
+  command "update-rc.d redis-server defaults"
+  action :nothing
+end
+
+# 起動スクリプトを設置する
+template "/etc/init.d/redis-server" do
+  source "redis-server.erb"
+  owner "root"
+  group "root"
+  mode 00755
+  valiables(
+    :redis_server_path => node['redis']['server_install_path']
+    :redis_conf_path => node['redis']['server_conf_path']
+    :redis_user => node['redis']['user']  
+  )
+  notifies :run, 'execute[update_rc_d]', :immediately
+  not_if {File.exists?("/etc/init.d/redis-server")}
+end
+
+# redis-server の起動
+service "redis-server" do
+  supports :start => true, :restart => true, :stop => true
+  subscribes :restart, "template[/etc/init.d/redis-server]", :immediately
+  only_if "id #{node['redis']['user']}"
 end
