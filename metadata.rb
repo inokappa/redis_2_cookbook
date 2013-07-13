@@ -1,7 +1,7 @@
 name             'redis_2_cookbook'
-maintainer       'YOUR_COMPANY_NAME'
-maintainer_email 'YOUR_EMAIL'
+maintainer       'Yohei Kawahara'
+maintainer_email 'inokara@gmail.com'
 license          'All rights reserved'
-description      'Installs/Configures redis_2_cookbook'
+description      'Installs/Configures setup'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '0.2.0'
+version          '0.3.1'
