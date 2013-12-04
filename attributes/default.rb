@@ -5,8 +5,8 @@ default['redis']['work_dir'] = '/usr/local/src/redis/'
 default['redis']['current_redis_version'] = '2.6.13'
 
 # Source code URL
-default['redis']['source_ver_num'] = '2.6.14'
-default['redis']['source_url_path'] = 'http://redis.googlecode.com/files/'
+default['redis']['source_ver_num'] = '2.8.2'
+default['redis']['source_url_path'] = 'http://download.redis.io/releases/'
 default['redis']['source_file_name'] = "redis-#{default['redis']['source_ver_num']}.tar.gz"
 
 # redis-server install path
