@@ -23,3 +23,6 @@ default['redis']['server_data_path'] = '/usr/local/redis'
 
 # redis user
 default['redis']['user'] = 'redis-user'
+
+# redis server log dir
+default['redis']['server_log_path'] = '/var/log/redis'

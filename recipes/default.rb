@@ -6,3 +6,9 @@
 #
 # All rights reserved - Do Not Redistribute
 #
+
+%W{gcc make}.each do |pkgs|
+  package pkgs do
+    action :install
+  end
+end

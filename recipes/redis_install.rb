@@ -74,6 +74,15 @@ directory node['redis']['server_data_path'] do
   not_if {File.exists? "#{node['redis']['server_data_path']}"}
 end
 
+# create redis log directory
+directory node['redis']['server_log_path'] do
+  owner node['redis']['user']
+  group node['redis']['user']
+  mode 0775
+  action :create
+  not_if {File.exists? "#{node['redis']['server_log_path']}"}
+end
+
 # start redis-server 
 service "redis-server" do
   supports :start => true, :restart => true, :stop => true
