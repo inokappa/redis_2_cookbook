@@ -32,14 +32,24 @@ user node['redis']['user'] do
 end
 
 # execute update-rc.d 
-execute "update_rc_d" do
-  command "update-rc.d redis-server defaults"
+execute "add_to_service" do
+  case node["platform"]
+  when "centos","amazon"
+    command "cd /etc/init.d/ && chkconfig --add redis-server"
+  else
+    command "update-rc.d redis-server defaults"
+  end
   action :nothing
 end
 
 # create startup script
 template "/etc/init.d/redis-server" do
-  source "redis-server.erb"
+  case node["platform"]
+  when "centos","amazon"
+    source "redis-server.erb.centos"
+  else
+    source "redis-server.erb.debian"
+  end
   owner "root"
   group "root"
   mode 00755
@@ -48,7 +58,7 @@ template "/etc/init.d/redis-server" do
     :redis_conf_path => node['redis']['server_conf_path'],
     :redis_user => node['redis']['user']  
   )
-  notifies :run, 'execute[update_rc_d]', :immediately
+  notifies :run, 'execute[add_to_service]', :immediately
   not_if {File.exists?("/etc/init.d/redis-server")}
 end
 
