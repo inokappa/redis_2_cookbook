@@ -4,9 +4,9 @@ driver_config:
   require_chef_omnibus: true
 
 platforms:
-- name: debian-6
+- name: centos-6
   driver_config:
-    image: inokappa/squeeze-basic
+    image: centos
 
 suites:
 - name: default

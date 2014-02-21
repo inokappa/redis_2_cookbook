@@ -1,0 +1,52 @@
+#!/bin/sh
+# chkconfig: 345 99 1
+# description: redis-server
+# processname: redis-server
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+#
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=<%= @redis_server_path %>
+DAEMON_ARGS=<%= @redis_conf_path %>
+NAME=redis-server
+DESC=redis-server
+PIDFILE=/var/run/redis/redis.pid
+
+case "$1" in
+    start)
+        if [ ! -d /var/run/redis ];then
+          mkdir /var/run/redis
+          chown redis-user:redis-user /var/run/redis
+        fi
+        daemon --user ${REDIS_USER-redis-user} "$DAEMON $DAEMON_ARGS"
+        ps aux | grep "redis-server \*:6379" | awk '{print $2}' > $PIDFILE
+        chown redis-user:redis-user $PIDFILE
+        echo "Stating Redis Server..."
+        ;;
+    stop)
+        echo "Stopping Redis Server..."
+        kill `cat $PIDFILE`
+        if [ -f $PIDFILE ];then
+          rm -f $PIDFILE
+        fi
+        echo "Stop Redis Server done."
+        ;;
+    restart)
+        echo "Stopping Redis Server..."
+        kill `cat $PIDFILE`
+        if [ -f $PIDFILE ];then
+          rm -f $PIDFILE
+        fi
+        echo "Stop Redis Server done."
+        sleep 3
+        daemon --user ${REDIS_USER-redis-user} "$DAEMON $DAEMON_ARGS"
+        ps aux | grep "redis-server \*:6379" | awk '{print $2}' > $PIDFILE
+        chown redis-user:redis-user $PIDFILE
+        echo "Stating Redis Server..."
+        ;;
+    *)
+        echo "Usage: /etc/init.d/redis-server {start|stop|restart}"
+        exit 1
+esac
+exit 0
